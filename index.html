@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teeth AI App</title>
+  <style>
+ body {
+  background-color: #282c35;
+  color: #fff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.6;
+}
+
+#body_header {
+  width: auto;
+  margin: 30px auto;
+  text-align: center;
+  font-size: 25px;
+  color: #fff;
+}
+
+form {
+  max-width: 400px;
+  margin: 20px auto;
+  padding: 30px;
+  background: #2f353e;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+h1, h2 {
+  margin: 0 0 30px 0;
+  text-align: center;
+}
+
+button {
+  padding: 15px 30px; /* Increased padding for a larger size */
+  color: #fff;
+  background-color: #61dafb;
+  font-size: 16px;
+  text-align: center;
+  font-style: normal;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  display: block;
+  margin: 20px auto; /* Increased margin for spacing */
+}
+
+button:hover {
+  background-color: #2186c4;
+}
+
+input, select, textarea {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  font-size: 16px;
+  height: 40px;
+  margin-bottom: 20px;
+  outline: 0;
+  padding: 10px;
+  width: 100%;
+  background-color: #2f353e;
+  color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  transition: box-shadow 0.3s ease;
+}
+
+input:focus, select:focus, textarea:focus {
+  box-shadow: 0 0 8px #61dafb;
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  color: #61dafb;
+}
+
+select {
+  padding: 10px;
+}
+
+legend {
+  font-size: 1.4em;
+  margin-bottom: 10px;
+}
+
+#camera-screen {
+  display: none;
+  text-align: center;
+  padding: 30px;
+  background-color: #2f353e;
+  border-radius: 10px;
+  margin: 20px auto;
+  max-width: 400px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+video {
+  width: 100%;
+  max-width: 400px;
+  margin-bottom: 20px;
+}
+
+
+  </style>
+
+</head>
+<body>
+
+  <div id="main-screen">
+    <h1> Welcome to RISing Smile.Ai </h1>
+    <button onclick="showAppointmentForm()">Book Appointment</button>
+    <button onclick="useCamera()">Try Dent-o-Vision</button>
+  </div>
+
+  <div id="appointment-form" style="display: none;">
+    <h2>Book Appointment</h2>
+      <form action="https://form.taxi/s/aziuvrn6" method="post">
+        <fieldset>
+          <legend><span class="number">1</span>Your basic details</legend>
+          <label for="name">Name*:</label>
+          <input type="text" id="name" name="user_name" placeholder="(full name)" required>
+  
+          <label for="mail">Email*:</label>
+          <input type="email" id="mail" name="user_email" placeholder="abc@xyz.com" required>
+  
+          <label for="tel">Contact Num:</label>
+          <input type="tel" id="tel" placeholder="+91" name="user_num">
+        </fieldset>
+  
+        <fieldset>
+          <legend><span class="number">2</span>Appointment Details</legend>
+          <label for="appointment_for">Appointment for*:</label>
+          <select id="appointment_for" name="appointment_for" required>
+            <option value="Regular checkup">Regular checkup</option>
+            <option value="Paining">Paining</option>
+            <option value="cleaning">Cleaning</option>
+          </select>
+          <label for="appointment_description">Appointment Description:</label>
+          <textarea id="appointment_description" name="appointment_description" placeholder="I have pain in my ...... Teeth."></textarea>
+          <label for="date">Date*:</label>
+          <input type="date" name="date" value="" required></input>
+        </fieldset>
+        <button type="submit">Request For Appointment</button>
+      </form>
+  </div>
+
+  <div id="camera-screen" style="display: none;">
+    <h2>Camera Screen</h2>
+    <video id="camera-feed" width="400" height="300" autoplay></video>
+    <button onclick="capturePhoto()">Capture Photo</button>
+    <button onclick="processImages()">Process Images</button>
+  </div>
+
+  <link rel="stylesheet" href="https://pyscript.net/releases/2023.11.1/core.css" />
+<script type="module" src="https://pyscript.net/releases/2023.11.1/core.js"></script>
+  
+
+
+  <script>
+    let stream;
+
+    function showAppointmentForm() {
+      document.getElementById('main-screen').style.display = 'none';
+      document.getElementById('appointment-form').style.display = 'block';
+    }
+
+    async function useCamera() {
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        const videoElement = document.getElementById('camera-feed');
+        videoElement.srcObject = stream;
+        document.getElementById('main-screen').style.display = 'none';
+        document.getElementById('camera-screen').style.display = 'block';
+      } catch (err) {
+        console.error('Error accessing camera:', err);
+      }
+    }
+
+    function submitForm(event) {
+      event.preventDefault(); // Prevent form from submitting normally
+      const isValid = validateForm();
+      if (isValid) {
+        useCamera();
+      }
+    }
+
+    function validateForm() {
+      // Validation logic here
+      return true; // Return true for demo purposes
+    }
+
+    function capturePhoto() {
+      const videoElement = document.getElementById('camera-feed');
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d');
+      canvas.width = videoElement.videoWidth;
+      canvas.height = videoElement.videoHeight;
+      context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+      const imgData = canvas.toDataURL('image/jpeg');
+      const img = new Image();
+      img.src = imgData;
+      document.body.appendChild(img); // For demonstration purposes
+    }
+
+    function processImages() {
+        const videoElement = document.getElementById('camera-feed');
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        canvas.width = videoElement.videoWidth;
+        canvas.height = videoElement.videoHeight;
+        context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+        const imgData = canvas.toDataURL('image/jpeg');
+
+        // Send image data to the server for processing
+        $.ajax({
+            type: 'POST',
+            url: '/process_image',
+            data: { image_data: imgData },
+            success: function (response) {
+                const predictedClass = response.predicted_class;
+                alert('Image processed. Predicted class: ' + predictedClass);
+            },
+            error: function (error) {
+                console.error('Error processing image:', error);
+            }
+        });
+    }
+
+  </script>
+
+</body>
+</html>
